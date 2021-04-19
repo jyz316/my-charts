@@ -8,18 +8,18 @@ The Folder `vue` contains the web app, and `electron` has the desktop container.
 ## Technologies
 
 - Web: 
- - Javascript framework: [Vue.js](https://vuejs.org/)
- - CSS: [Bulma](https://bulma.io/)
- - Icons: [Font Awesome 5](https://fontawesome.com/)
- - Desktop App: [Electron](https://www.electronjs.org/)
+  - Javascript framework: [Vue.js](https://vuejs.org/)
+  - CSS: [Bulma](https://bulma.io/)
+  - Icons: [Font Awesome 5](https://fontawesome.com/)
+  - Desktop App: [Electron](https://www.electronjs.org/)
 
 - Charts:
- - [ECharts](https://echarts.apache.org/en/index.html)
- - [C3.js](https://c3js.org/)
- - [Parallel Coordinates](https://github.com/BigFatDog/parcoords-es)
+  - [ECharts](https://echarts.apache.org/en/index.html)
+  - [C3.js](https://c3js.org/)
+  - [Parallel Coordinates](https://github.com/BigFatDog/parcoords-es)
 
 - Compute:
- - [PCA](https://github.com/mljs/pca)
+  - [PCA](https://github.com/mljs/pca)
 
 
 ## To be done:
