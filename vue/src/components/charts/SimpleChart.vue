@@ -165,11 +165,33 @@
         </div>
       </div>
 
-      <div class="field is-grouped is-grouped-multiline" v-if="!hasPieKind">
+      <div class="field is-grouped is-grouped-multiline button-line" v-if="!hasPieKind">
         <div class="control">
           <a class="button is-info is-small" @click="addSerie">
             添加数据
           </a>
+        </div>
+        <div class="code-button">
+          <button class="button is-small is-text"
+            @click="showCode = !showCode"
+            :class="{'has-text-grey-light': !showCode}">
+            <span class="icon">
+              <v-icon name="code"/>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <div v-if="showCode" class="columns">
+        <div class="column is-half">
+          <my-editor :editor-id="'editor1-' + view.id + '-' + chart.id"
+            :editor-height="340" :language="'javascript'"
+            :fixed="JSON.stringify(optionCode, null, 2)"></my-editor>
+        </div>
+        <div class="column is-half">
+          <my-editor :editor-id="'editor2-' + view.id + '-' + chart.id"
+            :editor-height="340" :language="'javascript'"
+            :fixed="JSON.stringify(option, null, 2)"></my-editor>
         </div>
       </div>
      </div>
@@ -177,8 +199,13 @@
 </template>
 
 <script>
+import MyEditor from '@/components/MyEditor'
+
 export default {
   name: 'simple-chart',
+  components: {
+    MyEditor
+  },
   props: ['chart', 'view'],
   data () {
     return {
@@ -192,7 +219,8 @@ export default {
       series: [],
       gregOptions: ['average', 'sum'],
       title: {text: '', left: 'center'},
-      legendOption: {show: true, top: 'bottom'}
+      legendOption: {show: true, top: 'bottom'},
+      showCode: false,
     }
   },
   computed: {
@@ -273,6 +301,14 @@ export default {
       const c = this.$refs['chart-' + this.chart.id]
       if (c) {
         c.setOption(op, true)
+      }
+      return op
+    },
+    optionCode () {
+      var op = JSON.parse(JSON.stringify(this.option));
+      op.xAxis.data = '${' + this.xAxis.columnName + '}'
+      for (var i=0;i<this.series.length;i++) {
+        op.series[i].data = '${' + this.series[i].columnName + '}'
       }
       return op
     },
@@ -471,6 +507,15 @@ export default {
 .my-checkbox {
   position: relative;
   top: 3px;
+}
+
+.button-line {
+  position: relative;
+
+  .code-button {
+    position: absolute;
+    right: 0px;
+  }
 }
 
 </style>

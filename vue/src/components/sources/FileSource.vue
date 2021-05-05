@@ -3,7 +3,8 @@
     <article class="message is-info mb-3">
       <div class="message-body">
          请从本地选择一个CSV（每行一组数据，行内数据由逗号“,”分隔，文件名后缀为.csv）或者TSV（数据由Tab分隔，文件名后缀为.tsv）文件。<br/>
-         文件的首行应为各数据列的名称。数据值不能含有逗号或Tab分隔。
+         文件的首行应为各数据列的名称。数据值不能含有逗号或Tab分隔。<br/>
+         文件也可以是一个<a href="https://zh.wikipedia.org/wiki/JSON" target="_blank">JSON</a>文件，包含一个JSON对象的列表，其中对象的结构应是相同的。
       </div>
     </article>
 
@@ -11,7 +12,7 @@
       <div class="control">
         <div class="file has-name">
           <label class="file-label">
-            <input class="file-input" type="file" accept=".csv,.tsv" @change="onFileChange">
+            <input class="file-input" type="file" accept=".csv,.tsv,.json" @change="onFileChange">
             <span class="file-cta">
               <span class="file-icon">
                 <v-icon name="upload"/>
@@ -85,7 +86,7 @@ export default {
         text: text,
         filename: this.file.name
       }
-      this.$store.commit('views/loadCsvData', data)
+      this.$store.commit('views/loadFileData', data)
     },
     commitSource () {
       this.source.file = this.file

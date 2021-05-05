@@ -1,5 +1,7 @@
 // helpers
 var fileSource = {category: 'file', categoryLabel: '文件', file: null, icon: 'file', label: ''}
+var commandSource = {category: 'cmd', categoryLabel: '命令', cmd: '', icon: 'terminal', label: ''}
+var pythonSource = {category: 'python', categoryLabel: 'Python', fullpath: '', filepath: '', filename: '', code: '', icon: 'brands/python', label: ''}
 
 function createView (id) {
   return {
@@ -82,13 +84,51 @@ function splitValues (line, br) {
   })
 }
 
+function parseJsonData (text) {
+  var data = {rows: [], format: [{columnName: '#', columnType: 'num'}], sortBy: [0, true]}
+  var obj = JSON.parse(text)
+  console.log(obj)
+  if (Array.isArray(obj) && obj.length && typeof obj[0] === 'object') {
+    var first = obj[0]
+    var format = Object.keys(first).map(function(k) {
+      return {
+        columnName: k,
+        columnType: typeof first[k] === 'number' ? 'num' : 'str'
+      }
+    })
+    var rows = []
+    for (var i=0;i<obj.length;i++) {
+      var row = {'#': i + 1}
+      format.forEach(function(f) {
+        var val = obj[i][f.columnName]
+        if (f.columnType == 'num') {
+          val = Number(val)
+          row[f.columnName] = isNaN(val) ? 0 : val
+        } else if (f.columnType == 'str') {
+          if (typeof val === 'object') {
+            row[f.columnName] = JSON.stringify(val)
+          } else {
+            row[f.columnName] = String(val)
+          }
+        }
+      })
+      rows.push(row)
+    }
+    format.unshift({columnName: '#', columnType: 'num'})
+    data = {rows: rows, format: format, sortBy: [0, true]}
+  }
+  return data
+}
+
 // initial state
 export const state = {
   count: 1,
   views: [firstView],
   activeView: firstView,
-  sources: [fileSource],
-  fileSource: fileSource
+  sources: [fileSource, commandSource, pythonSource],
+  fileSource: fileSource,
+  commandSource: commandSource,
+  pythonSource: pythonSource
 }
 
 // mutations
@@ -134,11 +174,15 @@ export const mutations = {
     }
   },
 
-  loadCsvData (state, data) {
+  loadFileData (state, data) {
     var index = findViewIndex(data.viewId, state.views)
     if (index != undefined) {
-      var data = parseCsvData(data.text, data.filename)
-      state.views[index].data = data
+      var filename = data.filename.toLowerCase()
+      if (filename.endsWith('.json')) {
+        state.views[index].data  = parseJsonData(data.text)
+      } else if (filename.endsWith('.csv') || filename.endsWith('.tsv')) {
+        state.views[index].data = parseCsvData(data.text, data.filename)
+      }
     }
   },
 

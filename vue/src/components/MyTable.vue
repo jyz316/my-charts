@@ -1,8 +1,9 @@
 <template>
   <div>
     <div class="notification is-success is-light rows-count">
-      <span>找到{{rows.length}}行数据</span> &nbsp;
-      <button v-if="shouldCut" class="button is-text is-small" @click="toggleCover">{{cut ? '展开所有' : '收起'}}</button>
+      <span>找到{{rowsLength}}行数据。</span>
+      <span v-if="maxRows && rowsLength > maxRows">显示前{{maxRows}}行数据。</span> 
+      <button v-if="shouldCut" class="button is-text is-small" @click="toggleCut">{{cut ? '展开所有' : '收起'}}</button>
     </div>
 
     <div class="table-container" :class="{'cut-off': cut}">
@@ -21,14 +22,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(r, j) in rows" :key="'view-' + view.id + '-tr-' + j">
+          <tr v-for="(r, j) in showingRows" :key="'view-' + view.id + '-tr-' + j">
             <td v-for="(c, k) in format" :key="'view-' + view.id + '-td-' + j + '-' + k" :class="{'has-text-right': c.columnType == 'num'}">
               <span>{{r[c.columnName]}}</span>
             </td>
           </tr>
         </tbody>
       </table>
-      <div class="table-cover" v-if="false" @click="toggleCover">
+      <div class="table-cover" v-if="false" @click="toggleCut">
         <span class="icon-text">
           <span class="icon">
             <v-icon name="angle-double-down"/>
@@ -48,11 +49,18 @@ export default {
     return {
       maxHeight: 500,
       tableHeight: 0,
-      cut: true
+      cut: true,
+      maxRows: 1000
     }
   },
   computed: {
-    rows () {
+    rowsLength () {
+      return this.view.data.rows.length
+    },
+    showingRows () {
+      if (this.maxRows && this.rowsLength > this.maxRows) {
+        return this.view.data.rows.slice(0, 1000)
+      }
       return this.view.data.rows
     },
     format () {
@@ -66,7 +74,8 @@ export default {
     }
   },
   watch: {
-    rows: function (val) {
+    rowsLength: function (val) {
+      console.log('rowslength changed')
       this.$nextTick(this.initTableContainer)
     }
   },
@@ -78,7 +87,12 @@ export default {
       }
       this.$store.commit('views/sortData', data)
     },
-    toggleCover () {
+    toggleCut () {
+      if (this.cut) {
+        this.maxRows = 0
+      } else {
+        this.maxRows = 1000
+      }
       this.cut = !this.cut
     },
     initTableContainer () {
@@ -89,6 +103,7 @@ export default {
       } else {
         this.cut = false
       }
+      console.log('done initTableContainer')
     }
   },
   mounted () {
