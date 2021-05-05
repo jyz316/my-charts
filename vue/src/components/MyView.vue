@@ -16,6 +16,8 @@
     </div>
 
     <file-source v-if="sourceCategory == 'file'" :view="view"></file-source>
+    <command-source v-if="sourceCategory == 'cmd'" :view="view"></command-source>
+    <python-source v-if="sourceCategory == 'python'" :view="view"></python-source>
 
     <my-table v-if="view.data" :view="view"></my-table>
 
@@ -47,6 +49,7 @@
       <div v-for="c in charts" :key="'view-' + view.id + '-chart-' + c.id" class="mt-5">
         <simple-chart v-if="c.chartType == 'simple'" :chart="c" :view="view" @delete-chart="deleteChart"></simple-chart>
         <simple-xy-chart v-if="c.chartType == 'xy'" :chart="c" :view="view" @delete-chart="deleteChart"></simple-xy-chart>
+        <custom-chart v-if="c.chartType == 'custom'" :chart="c" :view="view" @delete-chart="deleteChart"></custom-chart>
         <parallel-coord-chart v-if="c.chartType == 'paral-coord'" :chart="c" :view="view" @delete-chart="deleteChart"></parallel-coord-chart>
         <pca-chart v-if="c.chartType == 'pca'" :chart="c" :view="view" :groupOptions="groupOptions" :groupColors="groupColors" @delete-chart="deleteChart"></pca-chart>
         <histogram-chart v-if="c.chartType == 'histogram'" :chart="c" :view="view" :groupOptions="groupOptions" :groupColors="groupColors" @delete-chart="deleteChart"></histogram-chart>
@@ -59,9 +62,12 @@
 
 <script>
 import FileSource from '@/components/sources/FileSource'
+import CommandSource from '@/components/sources/CommandSource'
+import PythonSource from '@/components/sources/PythonSource'
 import MyTable from '@/components/MyTable'
 import SimpleChart from '@/components/charts/SimpleChart'
 import SimpleXyChart from '@/components/charts/SimpleXyChart'
+import CustomChart from '@/components/charts/CustomChart'
 import ParallelCoordChart from '@/components/charts/ParallelCoordChart'
 import PcaChart from '@/components/charts/PcaChart'
 import HistogramChart from '@/components/charts/HistogramChart'
@@ -73,9 +79,12 @@ export default {
   name: 'my-view',
   components: {
     FileSource,
+    CommandSource,
+    PythonSource,
     MyTable,
     SimpleChart,
     SimpleXyChart,
+    CustomChart,
     ParallelCoordChart,
     PcaChart,
     HistogramChart,
@@ -89,6 +98,7 @@ export default {
       chartOptions: [
         {name: 'simple', label: '简单图表'},
         {name: 'xy', label: '散点图'},
+        {name: 'custom', label: '自定义图表'},
         {name: 'paral-coord', label: '平行坐标图'},
         {name: 'pca', label: 'PCA分析'},
         {name: 'histogram', label: '直方图'},
@@ -106,7 +116,10 @@ export default {
       return this.$store.state.views.views
     },
     sourceOptions () {
-      return this.$store.state.views.sources
+      if (xTARGETx == 'electron') {
+        return this.$store.state.views.sources
+      }
+      return [this.$store.state.views.sources[0]]
     },
     rows () {
       return this.view.data.rows
