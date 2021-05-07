@@ -2,6 +2,8 @@
 var fileSource = {category: 'file', categoryLabel: '文件', file: null, icon: 'file', label: ''}
 var commandSource = {category: 'cmd', categoryLabel: '命令', cmd: '', icon: 'terminal', label: ''}
 var pythonSource = {category: 'python', categoryLabel: 'Python', fullpath: '', filepath: '', filename: '', code: '', icon: 'brands/python', label: ''}
+var sqliteSource = {category: 'sqlite', categoryLabel: 'SQLite', fullpath: '', filename: '', cmd: '', icon: 'database', label: ''}
+var httpSource = {category: 'http', categoryLabel: 'HTTP', url: null, icon: 'bolt', label: ''}
 
 function createView (id) {
   return {
@@ -87,7 +89,6 @@ function splitValues (line, br) {
 function parseJsonData (text) {
   var data = {rows: [], format: [{columnName: '#', columnType: 'num'}], sortBy: [0, true]}
   var obj = JSON.parse(text)
-  console.log(obj)
   if (Array.isArray(obj) && obj.length && typeof obj[0] === 'object') {
     var first = obj[0]
     var format = Object.keys(first).map(function(k) {
@@ -125,10 +126,12 @@ export const state = {
   count: 1,
   views: [firstView],
   activeView: firstView,
-  sources: [fileSource, commandSource, pythonSource],
+  sources: [fileSource, commandSource, pythonSource, sqliteSource, httpSource],
   fileSource: fileSource,
   commandSource: commandSource,
-  pythonSource: pythonSource
+  pythonSource: pythonSource,
+  sqliteSource: sqliteSource,
+  httpSource: httpSource
 }
 
 // mutations
@@ -190,7 +193,6 @@ export const mutations = {
     var index = findViewIndex(data.viewId, state.views)
     if (index != undefined) {
       sortDataByColumnIndex(state.views[index], data.columnIndex)
-      console.log(state.views[index])
     }
   }
 }

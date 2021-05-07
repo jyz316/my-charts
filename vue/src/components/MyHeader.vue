@@ -38,10 +38,24 @@
         </div>
 
         <div class="navbar-end">
-          <a class="navbar-item mr-4" @click="addView">
-            <span class="icon-text px-3">
+          <a class="navbar-item" :class="{'mr-4': isElectron}" @click="addView">
+            <span class="icon-text px-1">
               <span class="icon">
                 <v-icon name="folder-plus" scale="1.2"/>
+              </span>
+            </span>
+          </a>
+          <a class="navbar-item" href="./static/downloads/MyEcharts Setup 0.1.0.exe" target="_blank" v-if="!isElectron">
+            <span class="icon-text px-1">
+              <span class="icon">
+                <v-icon name="brands/windows" scale="1.2"/>
+              </span>
+            </span>
+          </a>
+          <a class="navbar-item mr-4" href="./static/downloads/MyEcharts-0.1.0.dmg" target="_blank" v-if="!isElectron">
+            <span class="icon-text px-1">
+              <span class="icon">
+                <v-icon name="brands/apple" scale="1.2"/>
               </span>
             </span>
           </a>
@@ -56,7 +70,8 @@ export default {
   name: 'my-header',
   data () {
     return {
-      menuActive: false
+      menuActive: false,
+      isElectron: xTARGETx == 'electron'
     }
   },
   computed: {

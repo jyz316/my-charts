@@ -18,6 +18,8 @@
     <file-source v-if="sourceCategory == 'file'" :view="view"></file-source>
     <command-source v-if="sourceCategory == 'cmd'" :view="view"></command-source>
     <python-source v-if="sourceCategory == 'python'" :view="view"></python-source>
+    <sqlite-source v-if="sourceCategory == 'sqlite'" :view="view"></sqlite-source>
+    <http-source v-if="sourceCategory == 'http'" :view="view"></http-source>
 
     <my-table v-if="view.data" :view="view"></my-table>
 
@@ -64,6 +66,8 @@
 import FileSource from '@/components/sources/FileSource'
 import CommandSource from '@/components/sources/CommandSource'
 import PythonSource from '@/components/sources/PythonSource'
+import SqliteSource from '@/components/sources/SqliteSource'
+import HttpSource from '@/components/sources/HttpSource'
 import MyTable from '@/components/MyTable'
 import SimpleChart from '@/components/charts/SimpleChart'
 import SimpleXyChart from '@/components/charts/SimpleXyChart'
@@ -81,6 +85,8 @@ export default {
     FileSource,
     CommandSource,
     PythonSource,
+    SqliteSource,
+    HttpSource,
     MyTable,
     SimpleChart,
     SimpleXyChart,
@@ -119,7 +125,7 @@ export default {
       if (xTARGETx == 'electron') {
         return this.$store.state.views.sources
       }
-      return [this.$store.state.views.sources[0]]
+      return [this.$store.state.views.sources[0], this.$store.state.views.sources[4]]
     },
     rows () {
       return this.view.data.rows

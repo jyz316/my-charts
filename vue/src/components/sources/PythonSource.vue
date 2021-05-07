@@ -29,7 +29,7 @@
     <div class="columns my-columns">
       <div class="column is-half">
         <div class="cmd-line">Python脚本：{{fullpath}}</div>
-        <my-editor :editor-id="'cmd1-' + view.id"
+        <my-editor :editor-id="'python1-' + view.id"
           :editor-height="600" :language="'python'"
           :init-code="initCode"
           @code-changed="updatePythonCode"></my-editor>
@@ -54,7 +54,7 @@
       </div>
       <div class="column is-half">
         <div class="cmd-line">标准输出：</div>
-        <my-editor :editor-id="'cmd2-' + view.id"
+        <my-editor :editor-id="'python2-' + view.id"
           :editor-height="600" :language="'bash'"
           :fixed="output"></my-editor>
       </div>
@@ -195,21 +195,24 @@ export default {
         this.source.filepath = result.filepath
         this.source.fullpath = result.fullpath
       }
+      this.commitSource()
     },
     openFile () {
       console.log('openFile')
       var fileService = window.require('electron').remote.require('./services/file.service.js')
       var result = fileService.selectAndOpenFile('Python file', ['py'])
-      console.log(result)
-      this.source.filename = result.filename
-      this.source.filepath = result.filepath
-      this.source.fullpath = result.fullpath
-      this.source.code = result.data
-      this.initCode = result.data
+      if (result) {
+        this.source.filename = result.filename
+        this.source.filepath = result.filepath
+        this.source.fullpath = result.fullpath
+        this.source.code = result.data
+        this.initCode = result.data
+        this.commitSource()
+      }
     }
   },
   mounted () {
-    if (this.view.source.category == 'command') {
+    if (this.view.source.category == 'python') {
       this.source = JSON.parse(JSON.stringify(this.view.source))
     } else {
       this.source = JSON.parse(JSON.stringify(this.defaultPythonSource))
