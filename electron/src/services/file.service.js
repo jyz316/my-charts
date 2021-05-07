@@ -2,6 +2,21 @@ const { dialog } = require('electron')
 const fs = require('fs')
 const path = require( "path" );
 
+function selectFile () {
+  var options = {
+    properties: ['openFile']
+  }
+  var selected = dialog.showOpenDialogSync(options)
+  console.log(selected)
+  if (selected) {
+    const fullpath = selected[0]
+    return {
+      fullpath: fullpath,
+      filename: path.basename(fullpath),
+    }
+  }
+}
+
 function selectAndOpenFile (name, extensions) {
   console.log('selectAndOpenFile')
   var options = {
@@ -51,4 +66,5 @@ module.exports = {
   selectAndOpenFile: selectAndOpenFile,
   selectAndWriteFile: selectAndWriteFile,
   writeFile: writeFile,
+  selectFile: selectFile
 };

@@ -20,6 +20,10 @@ import 'vue-awesome/icons/code'
 import 'vue-awesome/icons/question'
 import 'vue-awesome/icons/terminal'
 import 'vue-awesome/icons/brands/python'
+import 'vue-awesome/icons/database'
+import 'vue-awesome/icons/bolt'
+import 'vue-awesome/icons/brands/apple'
+import 'vue-awesome/icons/brands/windows'
 import Icon from 'vue-awesome/components/Icon'
 Vue.component('v-icon', Icon)
 
