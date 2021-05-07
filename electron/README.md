@@ -1,6 +1,6 @@
 # This Electron app quick start
-1. go to `vue` folder and run `TARGET=electron npm run build` for Unix like OS or `set TARGET=electron && npm run build` for Windows command line.
-2. go to `electron/app` folder, symlink the `vue/dist` folder: `ln -s path_to_vue/dist dist` or copy `vue/dist` folder to `electron/app/`
+1. Go to `vue` folder and run `TARGET=electron npm run build` for Unix like OS or `set TARGET=electron && npm run build` for Windows command line.
+2. Go to `electron/app` folder, symlink the `vue/dist` folder: `ln -s path_to_vue/dist dist` or copy `vue/dist` folder to `electron/app/`
 3. `npm install`
 4. `npm start`
 5. To build installer: `npm run release`
