@@ -20,13 +20,13 @@
           </div>
         </div>
         <div class="control">
-          <span class="is-size-7">Height:</span>
+          <span class="is-size-7">图高:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="number" placeholder="height" v-model.number="chartHeight">
         </div>
         <div class="control">
-          <span class="is-size-7">Width:</span>
+          <span class="is-size-7">图宽:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="text" placeholder="width" v-model="chartWidth">
@@ -74,7 +74,7 @@
           <span class="is-size-7">分布：</span>
         </div>
         <div class="control">
-          <input class="input is-small bins-input" type="text" placeholder="Bins: [,]p1,[(space),]p2...[,]" v-model="binsInput" @dblclick="binsChanged">
+          <input class="input is-small bins-input" type="text" placeholder="如,a,b,表示[<a][a-b][>=b]" v-model="binsInput" @dblclick="binsChanged">
         </div>
         <div class="control">
           <a class="button is-primary is-small" v-show="variables.length && binsInput.length" @click="binsChanged">

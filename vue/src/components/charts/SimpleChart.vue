@@ -4,10 +4,10 @@
       <button class="delete is-pulled-right" @click="deleteChart"></button>
       <div class="field is-grouped is-grouped-multiline">
         <div class="control">
-          <span class="is-size-7">Chart</span>
+          <span class="is-size-7">图表</span>
         </div>
         <div class="control">
-          <span class="is-size-7">Title:</span>
+          <span class="is-size-7">标题:</span>
         </div>
         <div class="control">
           <input class="input is-small" type="text" placeholder="title" v-model="title.text">
@@ -24,7 +24,7 @@
         <div class="control">
           <label class="checkbox is-size-7">
             <input type="checkbox" class="my-checkbox" v-model="legendOption.show">
-            Legend
+            图例
           </label>
         </div>
         <div class="control"  v-if="legendOption.show">
@@ -36,19 +36,19 @@
           </div>
         </div>
         <div class="control">
-          <span class="is-size-7">Height:</span>
+          <span class="is-size-7">图高:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="number" placeholder="height" v-model.number="chartHeight">
         </div>
         <div class="control">
-          <span class="is-size-7">Width:</span>
+          <span class="is-size-7">图宽:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="text" placeholder="width" v-model="chartWidth">
         </div>
         <div class="control">
-          <span class="is-size-7">Theme:</span>
+          <span class="is-size-7">主题:</span>
         </div>
         <div class="control">
           <div class="select is-small">
@@ -108,25 +108,25 @@
         <div class="control" v-if="series[i].chartType == 'line'">
           <label class="checkbox is-size-7">
             <input type="checkbox" class="my-checkbox" v-model="series[i].fill">
-            Fill
+            填充
           </label>
         </div>
         <div class="control" v-if="series[i].chartType == 'line'">
           <label class="checkbox is-size-7">
             <input type="checkbox" class="my-checkbox" v-model="series[i].smooth">
-            Smooth
+            光滑
           </label>
         </div>
         <div class="control" v-if="series[i].chartType == 'line'">
           <label class="checkbox is-size-7">
             <input type="checkbox" class="my-checkbox" v-model="series[i].step">
-            Step
+            阶梯
           </label>
         </div>
         <div class="control" v-if="series.length > 1">
           <label class="checkbox is-size-7">
             <input type="checkbox" class="my-checkbox" v-model="series[i].stack">
-            Stack
+            堆叠
           </label>
         </div>
         <div class="control" v-if="xAxis && series[i].columnName != xAxis.columnName && xAxisData && xAxisData.duplicated">
@@ -145,17 +145,17 @@
         <div class="control" v-if="hasPieKind">
           <label class="checkbox is-size-7">
             <input type="checkbox" class="my-checkbox" v-model="series[i].donut">
-            Donut
+            环形图
           </label>
         </div>
         <div class="control" v-if="hasPieKind">
           <label class="checkbox is-size-7">
             <input type="checkbox" class="my-checkbox" v-model="series[i].rounded">
-            Rounded
+            圆角环形图
           </label>
         </div>
         <div class="control">
-          <span class="is-size-7">Label:</span>
+          <span class="is-size-7">标签:</span>
         </div>
         <div class="control">
           <input class="input is-small" type="text" placeholder="legend" v-model="series[i].name">
@@ -265,7 +265,7 @@ export default {
         data: this.series.map(function (s) {
           return s.name
         }),
-        top: this.legendOption.top
+        top: this.legendOption.top == 'top' && this.title.left == 'center' ? 30 : this.legendOption.top
       }
     },
     hasPieKind () {

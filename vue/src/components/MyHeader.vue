@@ -3,7 +3,7 @@
     <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <router-link class="navbar-item is-size-4 has-text-weight-bold ml-4" :to="'/'">
-          My ECharts
+          My CSV
         </router-link>
         <div class="navbar-burger burger app-burger" :class="{'is-active': menuActive}"
           @click="menuActive = !menuActive">

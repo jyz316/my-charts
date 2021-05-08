@@ -7,13 +7,13 @@
           <span class="is-size-7">平行坐标图</span>
         </div>
         <div class="control">
-          <span class="is-size-7">Height:</span>
+          <span class="is-size-7">图高:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="number" placeholder="height" v-model.number="chartHeight">
         </div>
         <div class="control">
-          <span class="is-size-7">Width:</span>
+          <span class="is-size-7">图宽:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="text" placeholder="height" v-model="chartWidth">
@@ -21,7 +21,7 @@
         <div class="control">
           <label class="checkbox is-size-7">
             <input type="checkbox" class="my-checkbox" v-model="showSamples">
-            Show Samples
+            展示样本
           </label>
         </div>
       </div>
@@ -77,7 +77,7 @@
         <div class="control">
           <label class="radio">
             <input type="radio" name="colorBy" :value="i" v-model="colorBy">
-            Color By
+            上色
           </label>
         </div>
       </div>

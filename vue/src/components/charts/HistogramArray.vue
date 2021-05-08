@@ -7,13 +7,13 @@
           <span class="is-size-7">数据分布图</span>
         </div>
         <div class="control">
-          <span class="is-size-7">Height:</span>
+          <span class="is-size-7">图高:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="number" placeholder="height" v-model.number="chartHeight" @change="chartHeightChanged">
         </div>
         <div class="control">
-          <span class="is-size-7">Width:</span>
+          <span class="is-size-7">图宽:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="text" placeholder="width" v-model="chartWidth" @change="chartHeightChanged">
@@ -25,13 +25,13 @@
           <span class="is-size-7">设置</span>
         </div>
         <div class="control">
-          <span class="is-size-7">Small chart size:</span>
+          <span class="is-size-7">小图尺寸:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="number" placeholder="Size" v-model="chartSize" @change="chartSizeChanged">
         </div>
         <div class="control">
-          <span class="is-size-7">How many bins:</span>
+          <span class="is-size-7">分段数:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="number" placeholder="Bins" v-model="bins" @change="binsChanged">
@@ -39,11 +39,11 @@
         <div class="control">
           <label class="checkbox is-size-7">
             <input type="checkbox" class="my-checkbox" v-model="sortByEntropy">
-            Sort by Entropy
+            按信息熵大小排序
           </label>
         </div>
         <div class="control" v-if="groupOptions && groupOptions.length">
-          <span class="is-size-7">Split points by:</span>
+          <span class="is-size-7">分点:</span>
         </div>
         <div class="control"  v-if="groupOptions && groupOptions.length">
           <div class="select is-small">

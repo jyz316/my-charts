@@ -7,13 +7,13 @@
           <span class="is-size-7">相关矩阵</span>
         </div>
         <div class="control">
-          <span class="is-size-7">Height:</span>
+          <span class="is-size-7">图高:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="number" placeholder="height" v-model.number="chartHeight" @change="chartHeightChanged">
         </div>
         <div class="control">
-          <span class="is-size-7">Width:</span>
+          <span class="is-size-7">图宽:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="text" placeholder="width" v-model="chartWidth" @change="chartHeightChanged">
@@ -25,7 +25,7 @@
           <span class="is-size-7">设置</span>
         </div>
         <div class="control">
-          <span class="is-size-7">Cell size:</span>
+          <span class="is-size-7">矩阵块尺寸:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="number" placeholder="Size" v-model="cellSize">

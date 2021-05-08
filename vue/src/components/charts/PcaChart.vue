@@ -4,10 +4,10 @@
       <button class="delete is-pulled-right" @click="deleteChart"></button>
       <div class="field is-grouped is-grouped-multiline">
         <div class="control">
-          <span class="is-size-7">PCA Chart</span>
+          <span class="is-size-7">PCA图</span>
         </div>
         <div class="control" v-if="pca && groupOptions && groupOptions.length">
-          <span class="is-size-7">Split points by:</span>
+          <span class="is-size-7">分组方式:</span>
         </div>
         <div class="control"  v-if="pca && groupOptions && groupOptions.length">
           <div class="select is-small">
@@ -20,13 +20,13 @@
           </div>
         </div>
         <div class="control">
-          <span class="is-size-7">Height:</span>
+          <span class="is-size-7">图高:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="number" placeholder="height" v-model.number="chartHeight">
         </div>
         <div class="control">
-          <span class="is-size-7">Width:</span>
+          <span class="is-size-7">图宽:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="text" placeholder="width" v-model="chartWidth">
@@ -68,7 +68,7 @@
 
       <div class="field is-grouped is-grouped-multiline" v-if="groups.length && !groupOptionIndex">
         <div class="control">
-          <span class="group-label">Select points to split groups:</span>
+          <span class="group-label">自定义选点分组:</span>
         </div>
         <div class="control">
           <span v-for="(g, i) in groups" :key="'view-' + view.id + '-chart-' + chart.id + '-pca-manual-group-option-' + i">
@@ -82,12 +82,12 @@
         </div>
         <div class="control">
           <a class="button is-small" @click="addGroup">
-            Add group
+            添加Group
           </a>
         </div>
         <div class="control">
           <a class="button is-info is-small" @click="exportGroup">
-            Export data with group info
+            导出所选Group的数据
           </a>
         </div>
       </div>

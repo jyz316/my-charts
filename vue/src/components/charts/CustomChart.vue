@@ -4,22 +4,22 @@
       <button class="delete is-pulled-right" @click="deleteChart"></button>
       <div class="field is-grouped is-grouped-multiline">
         <div class="control">
-          <span class="is-size-7">Chart</span>
+          <span class="is-size-7">图表</span>
         </div>
         <div class="control">
-          <span class="is-size-7">Height:</span>
+          <span class="is-size-7">图高:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="number" placeholder="height" v-model.number="chartHeight">
         </div>
         <div class="control">
-          <span class="is-size-7">Width:</span>
+          <span class="is-size-7">图宽:</span>
         </div>
         <div class="control">
           <input class="input is-small number-input" type="text" placeholder="width" v-model="chartWidth">
         </div>
         <div class="control">
-          <span class="is-size-7">Theme:</span>
+          <span class="is-size-7">主题:</span>
         </div>
         <div class="control">
           <div class="select is-small">
