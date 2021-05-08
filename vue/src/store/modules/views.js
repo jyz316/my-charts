@@ -5,11 +5,14 @@ var pythonSource = {category: 'python', categoryLabel: 'Python', fullpath: '', f
 var sqliteSource = {category: 'sqlite', categoryLabel: 'SQLite', fullpath: '', filename: '', cmd: '', icon: 'database', label: ''}
 var httpSource = {category: 'http', categoryLabel: 'HTTP', url: null, icon: 'bolt', label: ''}
 
+var rowsMap = {}
+
 function createView (id) {
   return {
     id: id,
     source: fileSource,
-    data: null
+    data: null,
+    version: 0
   }
 }
 
@@ -60,7 +63,7 @@ function sortDataByColumnIndex (view, columnIndex) {
   var column = view.data.format[columnIndex]
   var sortBy = view.data.sortBy
   var asc = sortBy[0] == columnIndex ? !sortBy[1] : true
-  view.data.rows.sort(function(a, b) {
+  rowsMap[view.id].sort(function(a, b) {
     var aVal = a[column.columnName]
     var bVal = b[column.columnName]
     if (column.columnType == 'num') {
@@ -134,6 +137,17 @@ export const state = {
   httpSource: httpSource
 }
 
+// getters
+export const getters = {
+  getRowsByViewId: (state) => (viewId) => {
+    var index = findViewIndex(viewId, state.views)
+    if (index != undefined) {
+      return rowsMap[state.views[index].id]
+    }
+    return null
+  }
+}
+
 // mutations
 export const mutations = {
 
@@ -161,6 +175,7 @@ export const mutations = {
     } else {
       state.activeView = null
     }
+    delete rowsMap[viewId]
   },
 
   updateSource (state, data) {
@@ -175,6 +190,7 @@ export const mutations = {
     if (index != undefined) {
       state.views[index].data = null
     }
+    rowsMap = {}
   },
 
   loadFileData (state, data) {
@@ -182,9 +198,15 @@ export const mutations = {
     if (index != undefined) {
       var filename = data.filename.toLowerCase()
       if (filename.endsWith('.json')) {
-        state.views[index].data  = parseJsonData(data.text)
+        var parsedData = parseJsonData(data.text)
+        state.views[index].data = {format: parsedData.format, sortBy: parsedData.sortBy}
+        state.views[index].version++
+        rowsMap[data.viewId] = parsedData.rows
       } else if (filename.endsWith('.csv') || filename.endsWith('.tsv')) {
-        state.views[index].data = parseCsvData(data.text, data.filename)
+        var parsedData = parseCsvData(data.text, data.filename)
+        state.views[index].data = {format: parsedData.format, sortBy: parsedData.sortBy}
+        state.views[index].version++
+        rowsMap[data.viewId] = parsedData.rows
       }
     }
   },
@@ -193,6 +215,7 @@ export const mutations = {
     var index = findViewIndex(data.viewId, state.views)
     if (index != undefined) {
       sortDataByColumnIndex(state.views[index], data.columnIndex)
+      state.views[index].version++
     }
   }
 }
@@ -200,6 +223,7 @@ export const mutations = {
 export default {
   namespaced: true,
   state,
+  getters,
   mutations
 }
 

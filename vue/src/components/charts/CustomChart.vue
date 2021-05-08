@@ -105,10 +105,14 @@ export default {
       optionComputed: ' ',
       option: {},
       showHelp: false,
-      error: ''
+      error: '',
+      rows: []
     }
   },
   computed: {
+    viewVersion () {
+      return this.view.version
+    },
     format () {
       return this.view.data.format
     },
@@ -119,7 +123,7 @@ export default {
         columnMap[c.columnName] = {
           columnName: c.columnName,
           columnType: c.columnType,
-          data: vm.view.data.rows.map(function (r) {
+          data: vm.rows.map(function (r) {
             if (c.columnType == 'num') {
               return parseFloat(r[c.columnName])
             }
@@ -134,6 +138,11 @@ export default {
         return this.chartWidth
       }
       return this.chartWidth + 'px'
+    },
+  },
+  watch: {
+    viewVersion: function (val) {
+      this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
     },
   },
   methods: {
@@ -184,16 +193,19 @@ export default {
       if (!columns.length) {
         return s
       }
-      var data = []
-      for (var i = 0;i<columns[0].length;i++) {
-        if (columns.length == 1) {
-          data.push(columns[0][i])
-        } else {
-          data.push(columns.map(c => c[i]))
-        }
+      var data
+      if (columns.length == 1) {
+        data = columns[0]
+      } else {
+        data = columns[0].map(function(r, i) {
+          return columns.map(c => c[i])
+        })
       }
       return data
     }
+  },
+  mounted () {
+    this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
   }
 }
 </script>

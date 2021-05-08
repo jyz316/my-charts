@@ -114,7 +114,8 @@ export default {
       chartTypeInput: 'simple',
       count: 0,
       charts: [],
-      groupColors: ['#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#1f77b4']
+      groupColors: ['#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#1f77b4'],
+      rows: null
     }
   },
   computed: {
@@ -127,15 +128,12 @@ export default {
       }
       return [this.$store.state.views.sources[0], this.$store.state.views.sources[4]]
     },
-    rows () {
-      return this.view.data.rows
-    },
     format () {
       return this.view.data.format
     },
     groupOptions () {
       var groupOptions = []
-      if(this.rows.length > 10){
+      if(this.rows && this.rows.length > 10){
         for(var i=0;i<this.format.length;i++){
           var opt = {name: this.format[i].columnName, dataIndex: i, values: {}}
           groupOptions.push(opt)
@@ -194,6 +192,9 @@ export default {
         this.charts.splice(index, 1)
       }
     },
+  },
+  mounted () {
+    this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
   }
 }
 </script>

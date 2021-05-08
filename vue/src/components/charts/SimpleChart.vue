@@ -129,10 +129,10 @@
             Stack
           </label>
         </div>
-        <div class="control" v-if="xAxis && series[i].columnName != xAxis.columnName && xAxisData && xAxisData.duplicated">
+        <div class="control" v-if="xAxis && series[i].columnName != xAxis.columnName && xDuplicated">
           <span class="is-size-7">Multi-value:</span>
         </div>
-        <div class="control" v-if="xAxis && series[i].columnName != xAxis.columnName && xAxisData && xAxisData.duplicated">
+        <div class="control" v-if="xAxis && series[i].columnName != xAxis.columnName && xDuplicated">
           <div class="select is-small">
             <select v-model="series[i].greg">
               <option v-for="(go, j) in gregOptions"
@@ -201,6 +201,9 @@
 <script>
 import MyEditor from '@/components/MyEditor'
 
+var cache = {}
+
+
 export default {
   name: 'simple-chart',
   components: {
@@ -215,17 +218,18 @@ export default {
       chartThemeOptions: ['light', 'dark', 'vintage', 'westeros', 'essos', 'wonderland', 'walden', 'chalk', 'infographic', 'macarons', 'roma', 'shine', 'purple-passion', 'halloween', 'ovilia-green'],
       chartTheme: 'light',
       xAxis: null,
-      xAxisData: null, 
       series: [],
       gregOptions: ['average', 'sum'],
       title: {text: '', left: 'center'},
       legendOption: {show: true, top: 'bottom'},
       showCode: false,
+      rows: [],
+      xDuplicated: false
     }
   },
   computed: {
-    rows () {
-      return this.view.data.rows
+    viewVersion () {
+      return this.view.version
     },
     format () {
       return this.view.data.format
@@ -288,15 +292,15 @@ export default {
           }
         },
       }
-      var xAxis = this.collectXData()
-      var series = this.collectSeriesData()
-      op.xAxis = this.hasPieKind ? undefined : xAxis
+      op.xAxis  = {type: 'category'}
+      var xAxisData = this.collectXData()
+      op.xAxis .data = xAxisData.values
+      var series = this.collectSeriesData(xAxisData)
+      op.xAxis = this.hasPieKind ? undefined : op.xAxis
       op.yAxis = this.hasPieKind ? undefined : {
           type: 'value'
       }
       op.series = series
-
-      console.log(op)
 
       const c = this.$refs['chart-' + this.chart.id]
       if (c) {
@@ -344,6 +348,9 @@ export default {
     format: function (val) {
       this.$nextTick(this.initOptions)
     },
+    viewVersion: function (val) {
+      this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
+    },
   },
   methods: {
     initOptions () {
@@ -354,43 +361,57 @@ export default {
       this.addSerie()
     },
     collectXData () {
-      var xAxis = {
-        type: 'category'
-      }
       if (!this.xAxis) {
-        return xAxis
+        return {}
       }
-      if (this.xAxis.columnName == '#') {
-        xAxis.data = this.makeRange()
-      } else {
-        xAxis.data = this.findUniqueValues()
-      }
-      this.makeAxisData(xAxis.data)
-      return xAxis
-    },
-    collectSeriesData () {
+      var columnName = this.xAxis.columnName
+      var values = []
+      var indexMap = {}
       var vm = this
-      if (!vm.xAxis || !vm.xAxisData || !vm.series.length) {
+      this.rows.forEach(function (r, i){
+        var value = vm.xAxis.columnName == '#' ? (i + 1) : r[columnName]
+        if (!indexMap[value]) {
+          indexMap[value] = []
+          values.push(value)
+        }
+        indexMap[value].push(i)
+      })
+      this.xDuplicated = values.length < this.rows.length
+      return {values: values, indexMap: indexMap}
+    },
+    collectSeriesData (xAxisData) {
+      var vm = this
+      if (!vm.xAxis || !xAxisData || !vm.series.length) {
         return []
       }
       var seriesData = vm.series.map(function (s) {
-        return vm.xAxisData.values.map(function (v) {
-          return {count: 0, sum: 0, average: 0}
+        if (cache[vm.xAxis.columnName] && cache[vm.xAxis.columnName][s.columnName]) {
+          console.log('hit cache')
+          return cache[vm.xAxis.columnName][s.columnName]
+        }
+        if (s.columnName == vm.xAxis.columnName) {
+          if (vm.duplicated) {
+            return xAxisData.values.map(v => ({count: xAxisData.indexMap[v].length, sum: 0, average: 0}))
+          }
+          return xAxisData.values.map(v => ({count: 1, sum: 0, average: 0}))
+        }
+        if (!vm.xDuplicated) {
+          return vm.rows.map(function (r) {
+            var yValue = parseFloat(r[s.columnName])
+            return {count: 1, sum: yValue, average: yValue}
+          })
+        }
+        return xAxisData.values.map(function (v, i) {
+          var yValues = xAxisData.indexMap[v].map(function(index) {
+            return parseFloat(vm.rows[index][s.columnName])
+          })
+          var sum = yValues.reduce((a,b) => a + b, 0)
+          return {sum: sum, average: (sum / yValues.length)}
         })
       })
-      for (var i=0;i<vm.rows.length;i++) {
-        var row = vm.rows[i]
-        for (var j=0;j<vm.series.length;j++) {
-          var xValue = vm.xAxis.columnName == '#' ? (i + 1) : row[vm.xAxis.columnName]
-          var xValueIndex = vm.xAxisData.indexMap[xValue]
-          var columnName = vm.series[j].columnName
-          var yValue = columnName == vm.xAxis.columnName ? 0 : parseFloat(row[columnName])
-          var valueToUpdate = seriesData[j][xValueIndex]
-          valueToUpdate.sum += yValue
-          valueToUpdate.count += 1
-          valueToUpdate.average = valueToUpdate.sum / valueToUpdate.count
-        }
-      }
+
+      this.updateCache(vm.xAxis, vm.series, seriesData)
+
       return vm.series.map(function (s, i) {
         return {
           type: s.chartType,
@@ -400,7 +421,7 @@ export default {
               value = d.count
             }
             if (vm.isPieKind(s)) {
-              return {value: value, name: vm.xAxisData.values[j]}
+              return {value: value, name: xAxisData.values[j]}
             }
             return value
           }),
@@ -415,30 +436,13 @@ export default {
         }
       })
     },
-    makeRange () {
-      var range = [...Array(this.rows.length + 1).keys()]
-      range.shift()
-      return range
-    },
-    findUniqueValues () {
-      var columnName = this.xAxis.columnName
-      var valueSet = new Set()
-      var values = []
-      this.rows.forEach(function (r){
-        var value = r[columnName]
-        if (!valueSet.has(value)) {
-          values.push(value)
-          valueSet.add(value)
-        }
-      })
-      return values
-    },
-    makeAxisData (values) {
-      var indexMap = {}
-      for (var i=0;i<values.length;i++) {
-        indexMap[values[i]] = i
+    updateCache (xAxis, series, seriesData) {
+      if (!cache[xAxis.columnName]) {
+        cache[xAxis.columnName] = {}
       }
-      this.xAxisData = {values: values, indexMap: indexMap, duplicated: values.length < this.rows.length}
+      series.forEach(function(s, i) {
+        cache[xAxis.columnName][s.columnName] = seriesData[i]
+      })
     },
     addSerie () {
       this.series.push({
@@ -478,6 +482,7 @@ export default {
     },
   },
   mounted () {
+    this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
     this.$nextTick(this.initOptions)
   }
 }

@@ -112,12 +112,13 @@ export default {
       colorBy: 0,
       table: [],
       parcoords: null,
-      showSamples: false
+      showSamples: false,
+      rows: []
     }
   },
   computed: {
-    rows () {
-      return this.view.data.rows
+    viewVersion () {
+      return this.view.version
     },
     format () {
       return this.view.data.format
@@ -139,7 +140,10 @@ export default {
       this.$nextTick(function(){
         this.rerender()
       })
-    }
+    },
+    viewVersion: function (val) {
+      this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
+    },
   },
   methods: {
     initOptions () {
@@ -272,6 +276,7 @@ export default {
     },
   },
   mounted () {
+    this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
     var v = {index: 0, dataIndex: 0, type: 'number', show: true}
     this.variables.push(v)
     for(var i=0;i<this.rows.length;i++){

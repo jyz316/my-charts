@@ -121,11 +121,12 @@ export default {
       yRange: null,
       exportUrl: null,
       groupOptionIndex: 0,
+      rows: []
     }
   },
   computed: {
-    rows () {
-      return this.view.data.rows
+    viewVersion () {
+      return this.view.version
     },
     format () {
       return this.view.data.format
@@ -172,6 +173,9 @@ export default {
     },
     chartHeight: function (val) {
       this.chartHeightChanged()
+    },
+    viewVersion: function (val) {
+      this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
     },
   },
   methods: {
@@ -520,6 +524,7 @@ export default {
     }
   },
   mounted () {
+    this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
     this.$nextTick(function(){
       this.self.chart = c3.generate({
         bindto: '#chart' + this.chart.id,

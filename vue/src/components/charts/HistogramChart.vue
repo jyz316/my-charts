@@ -102,16 +102,20 @@ export default {
       bins: [],
       binsInput: '',
       self: {},
-      groupOptionIndex: 0
+      groupOptionIndex: 0,
+      dataRows: []
     }
   },
   computed: {
+    viewVersion () {
+      return this.view.version
+    },
     format () {
       return this.view.data.format
     },
     rows () {
       var vm = this
-      return vm.view.data.rows.map(function (row) {
+      return vm.dataRows.map(function (row) {
         return vm.format.map(function (h) {
           return row[h.columnName]
         })
@@ -164,7 +168,10 @@ export default {
       this.$nextTick(function(){
         this.resizeChart(this.chartHeight)
       })
-    }
+    },
+    viewVersion: function (val) {
+      this.dataRows = this.$store.getters['views/getRowsByViewId'](this.view.id)
+    },
   },
   methods: {
     deleteChart () {
@@ -442,6 +449,7 @@ export default {
     }
   },
   mounted () {
+    this.dataRows = this.$store.getters['views/getRowsByViewId'](this.view.id)
     this.$nextTick(function(){
       this.self.chart = c3.generate({
         bindto: '#chart' + this.chart.id,

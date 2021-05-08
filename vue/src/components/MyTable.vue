@@ -50,18 +50,22 @@ export default {
       maxHeight: 500,
       tableHeight: 0,
       cut: true,
-      maxRows: 1000
+      maxRows: 1000,
+      rows: []
     }
   },
   computed: {
+    viewVersion () {
+      return this.view.version
+    },
     rowsLength () {
-      return this.view.data.rows.length
+      return this.rows && this.rows.length
     },
     showingRows () {
       if (this.maxRows && this.rowsLength > this.maxRows) {
-        return this.view.data.rows.slice(0, 1000)
+        return this.rows.slice(0, 1000)
       }
-      return this.view.data.rows
+      return this.rows
     },
     format () {
       return this.view.data.format
@@ -74,6 +78,9 @@ export default {
     }
   },
   watch: {
+    viewVersion: function (val) {
+      this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
+    },
     rowsLength: function (val) {
       console.log('rowslength changed')
       this.$nextTick(this.initTableContainer)
@@ -107,7 +114,8 @@ export default {
     }
   },
   mounted () {
-    this.initTableContainer()
+    this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
+    this.$nextTick(this.initTableContainer)
   }
 }
 </script>
