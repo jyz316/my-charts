@@ -76,16 +76,20 @@ export default {
       variables: [],
       matrix: [],
       activeX: 0,
-      activeY: 0
+      activeY: 0,
+      dataRows: []
     }
   },
   computed: {
+    viewVersion () {
+      return this.view.version
+    },
     format () {
       return this.view.data.format
     },
     rows () {
       var vm = this
-      return vm.view.data.rows.map(function (row) {
+      return vm.dataRows.map(function (row) {
         return vm.format.map(function (h) {
           return row[h.columnName]
         })
@@ -123,7 +127,10 @@ export default {
     activeY: function (val) {
       if(val >= 0 && val <= this.variables.length)
         this.updateChart()
-    }
+    },
+    viewVersion: function (val) {
+      this.dataRows = this.$store.getters['views/getRowsByViewId'](this.view.id)
+    },
   },
   methods: {
     deleteChart () {
@@ -211,6 +218,7 @@ export default {
     }
   },
   mounted () {
+    this.dataRows = this.$store.getters['views/getRowsByViewId'](this.view.id)
     this.loadVariables()
     this.computeMatrix()
     this.$nextTick(function(){

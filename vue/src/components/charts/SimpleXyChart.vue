@@ -177,11 +177,12 @@ export default {
       legendOption: {show: true, top: 'bottom'},
       chartTypeOptions: ['scatter', 'line'],
       showCode: false,
+      rows: []
     }
   },
   computed: {
-    rows () {
-      return this.view.data.rows
+    viewVersion () {
+      return this.view.version
     },
     format () {
       return this.view.data.format
@@ -264,6 +265,9 @@ export default {
     format: function (val) {
       this.$nextTick(this.initOptions)
     },
+    viewVersion: function (val) {
+      this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
+    },
   },
   methods: {
     initOptions () {
@@ -276,17 +280,13 @@ export default {
         return []
       }
       var seriesData = vm.series.map(function (s) {
-        return []
+        return vm.rows.map(function(r, i) {
+          var xy = s.xy
+          var x = xy[0] == '#' ? (i + 1) : parseFloat(r[xy[0]])
+          var y = xy[1] == '#' ? (i + 1) : parseFloat(r[xy[1]])
+          return [x, y]
+        })
       })
-      for (var i=0;i<vm.rows.length;i++) {
-        var row = vm.rows[i]
-        for (var j=0;j<vm.series.length;j++) {
-          var xy = vm.series[j].xy
-          var x = xy[0] == '#' ? (i + 1) : parseFloat(row[xy[0]])
-          var y = xy[1] == '#' ? (i + 1) : parseFloat(row[xy[1]])
-          seriesData[j].push([x, y])
-        }
-      }
       return vm.series.map(function (s, i) {
         return {
           type: s.chartType,
@@ -327,6 +327,7 @@ export default {
     },
   },
   mounted () {
+    this.rows = this.$store.getters['views/getRowsByViewId'](this.view.id)
     this.$nextTick(this.initOptions)
   }
 }
